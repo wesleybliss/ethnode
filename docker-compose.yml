@@ -1,0 +1,20 @@
+version: '3.6'
+
+services:
+  
+  ethnode:
+    # image: ghcr.io/vrde/ethnode:latest
+    build: .
+    container_name: dolce-ethnode
+    restart: always
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - dolce-ethnode:/dolce-ethnode
+    command: >
+      ethnode \
+        --workdir /dolce-ethnode \
+        --chainid 1337
+  
+volumes:
+  dolce-ethnode:

@@ -46,6 +46,7 @@ function generateGenesis(client, chainId, balances) {
   );
   if (client === "geth") {
     genesis.config.chainId = chainId;
+    genesis.config.networkId = chainId;
     genesis.extraData =
       "0x" +
       "0".repeat(64) +
@@ -141,7 +142,7 @@ async function provide(
   if (client === "geth") {
     const childResult = spawnSync(
       paths.binary,
-      [...loggingOptions, "--datadir", paths.data, "init", paths.genesis],
+      [...loggingOptions, "--datadir", paths.data, "--networkid", genesis.config.chainId, "init", paths.genesis],
       {
         stdio: execute ? ["ignore", "ignore", "ignore"] : "inherit",
       }
@@ -197,7 +198,6 @@ async function run(
     }
     console.log();
   }
-
   let args;
   if (client === "geth") {
     args = [
@@ -211,6 +211,7 @@ async function run(
       "localhost",
       "--http.port",
       "8545",
+      "--networkid", genesis.config.chainId.toString(),
       "--http.api",
       "personal,eth,net,web3,txpool,miner,debug",
       "--http.corsdomain",
@@ -251,6 +252,8 @@ async function run(
       paths.keys,
       "--min-gas-price",
       "4000000000",
+      "--http.vhosts",
+      "*",
       "--jsonrpc-cors",
       "all",
       "--jsonrpc-apis",
